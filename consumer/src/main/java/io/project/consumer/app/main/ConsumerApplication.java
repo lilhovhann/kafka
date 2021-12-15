@@ -4,11 +4,8 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @SpringBootApplication
 @ComponentScan("io.project")
@@ -22,15 +19,4 @@ public class ConsumerApplication {
         application.run(args).getEnvironment();
 
     }
-    
-    @Bean("threadPoolTaskExecutor")
-    public TaskExecutor getAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(100);
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setThreadNamePrefix("Kafka-stream-");
-        return executor;
-    }
-
 }

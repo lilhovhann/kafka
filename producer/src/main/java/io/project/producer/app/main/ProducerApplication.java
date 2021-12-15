@@ -50,16 +50,7 @@ public class ProducerApplication {
     @Autowired
     private RoutingKafkaTemplate routingTemplate;
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void init() {
-        for (int i = 0; i < 1000000; i++) {
-            long currentTimeMillis = System.currentTimeMillis();
-            routingTemplate.send("event", "@event " + currentTimeMillis);
-            routingTemplate.send("order", "#order " + currentTimeMillis);
-            routingTemplate.send("syslog", "#syslog " + currentTimeMillis);
-        }
 
-    }
 
     //https://docs.spring.io/spring-kafka/docs/current/reference/html/#routing-template
 }
