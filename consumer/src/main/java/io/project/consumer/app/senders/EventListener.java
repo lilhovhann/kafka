@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class EventListener {
 
     
-    @KafkaListener(topics = {"event"})
+    @KafkaListener(topics = {"urish"})
     public void order(final @Payload String message
     ) {
         log.info("Received From Topic order: " + message);
