@@ -1,0 +1,79 @@
+version: "3.3"
+
+services:    
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - pnet
+      
+  kafka:
+    image: wurstmeister/kafka   
+    container_name: kafka
+    ports:
+      - target: 9094
+        published: 9094
+        protocol: tcp
+        mode: host
+    environment:
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://_{HOSTNAME_COMMAND}:9094
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_PORT: 9092
+      KAFKA_CREATE_TOPICS: "gpsstream:3:1,logstream:3:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+    networks:
+      - pnet
+ 
+
+  producer:
+    image: producer
+    build: ./producer
+    container_name: producer
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    links:
+      - kafka         
+    depends_on:
+      - kafka          
+    ports:
+      - '7001:7001'   
+    networks:
+      - pnet     
+      
+  consumer:
+    image: consumer
+    build: ./consumer
+    container_name: consumer
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    links:
+      - kafka         
+    depends_on:
+      - kafka          
+    ports:
+      - '7002:7002'   
+    networks:
+      - pnet
+      
+      
+networks:
+  pnet:
+    driver: bridge

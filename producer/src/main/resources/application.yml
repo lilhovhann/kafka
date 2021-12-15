@@ -1,0 +1,54 @@
+management:
+  endpoint:    
+    health:
+      enabled: true
+      show-details: always
+  endpoints:
+    jmx:
+      exposure:
+       include: '*'
+    web:
+     base-path: /management
+     exposure:
+      include: '*'
+      base-path: /actuator
+    cors:
+      allowed-origins: 'true'
+      enabled-by-default: 'false'
+    
+server:
+    http2:
+      enabled: true
+    port: 7001
+    servlet:
+      session:
+        timeout: 600s
+    undertow:
+       buffer-size: 65536
+       worker-threads: 800
+       no-request-timeout: 600s
+       threads:
+         io: 2000
+    compression:
+      enabled: true
+      mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+      min-response-size: 1024
+    
+spring:
+  kafka:
+    producer:
+      retries: 10     
+      bootstrap-servers: kafka:9092
+      buffer-memory: 60554432
+      client-id: producer
+
+
+  application:
+    name: producer
+    
+  cloud:
+    discovery:
+       service-id: producer
+       enabled: true
+
+

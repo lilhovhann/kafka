@@ -1,0 +1,62 @@
+management:
+  endpoint:    
+    health:
+      enabled: true
+      show-details: always
+  endpoints:
+    jmx:
+      exposure:
+       include: '*'
+    web:
+     base-path: /management
+     exposure:
+      include: '*'
+      base-path: /actuator
+    cors:
+      allowed-origins: 'true'
+      enabled-by-default: 'false'
+    
+server:
+    http2:
+      enabled: true
+    port: 7002
+    servlet:
+      session:
+        timeout: 600s
+    undertow:
+       buffer-size: 65536
+       worker-threads: 800
+       no-request-timeout: 600s
+       threads:
+         io: 2000
+    compression:
+      enabled: true
+      mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+      min-response-size: 1024
+    
+spring:
+  kafka:   
+    listener:
+      ack-mode: BATCH
+      concurrency: 3
+    consumer:
+      bootstrap-servers: kafka:9092
+      group-id: global
+      auto-offset-reset: earliest         
+      enable-auto-commit: false
+      session.timeout.ms: 30000
+      request.timeout.ms: 40000
+      max.poll.interval.ms: 30000
+      max.poll.records: 10
+      fetch-max-wait: 100
+      fetch-min-size: 1048576
+
+  application:
+    name: consumer
+    
+  cloud:
+    discovery:
+       service-id: consumer
+       enabled: true
+
+
